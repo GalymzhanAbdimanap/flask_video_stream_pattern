@@ -21,15 +21,45 @@ class Camera(BaseCamera):
     def frames():
         camera = cv2.VideoCapture(Camera.video_source)
 
+        #option 1
         while True:
             for i in range(10):
                 ret, frame = camera.read()
             try:
-
-                # cv2.putText(frame,text,(x_sh*2-50,y_sh*2-50), cv2.FONT_HERSHEY_SIMPLEX, 1,(0,255,0),1,cv2.LINE_AA)
+                #logic
                 yield cv2.imencode('.jpg', frame)[1].tobytes()
-
-                # yield cv2.imencode('.jpg', frame)[1].tobytes()
-
+            except:
+                pass
+            
+           
+        #option 2
+        while True:
+            if camera.isOpened():
+                for i in range(5):
+                    ret, image = camera.read()
+            if ret:
+                if image == 'None':
+                    continue
+            try:
+                #logic
+                yield cv2.imencode('.jpg', frame)[1].tobytes()
+            except:
+                pass
+            
+          
+        #option 3
+        while True:
+            try:
+                for i in range(5):
+                    ret, frame = camera.read()
+                 
+                if frame is None:
+                    # print("frame None")
+                    camera = cv2.VideoCapture(Camera.video_source)
+                    yield cv2.imencode('.jpg', frame)[1].tobytes()
+                    continue
+                    
+                #logic
+                yield cv2.imencode('.jpg', frame)[1].tobytes()
             except:
                 pass
