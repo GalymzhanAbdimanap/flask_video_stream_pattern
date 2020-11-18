@@ -16,16 +16,41 @@ class Camera(BaseCamera):
     @staticmethod
     def set_video_source(source):
         Camera.video_source = source
+        
+        
+        
+    #==================================================
+    # Flush buffer in camera.
+    def flushCamera(camera):
+        delay = 0
+
+        framesWithDelayCount = 0
+        flushed_frames = 0
+
+        while (framesWithDelayCount <= 1):
+            timer_start = time.time()
+
+            camera.grab()
+            flushed_frames += 1
+
+            delay = time.time() - timer_start
+
+            if (delay > 0):
+                framesWithDelayCount += 1
 
     @staticmethod
     def frames():
         camera = cv2.VideoCapture(Camera.video_source)
-
+        flushCamera(camera)
         #option 1
-        while True:
-            for i in range(10):
-                ret, frame = camera.read()
+        while True:  
             try:
+                ret, frame = camera.read()
+                flushCamera(camera)
+                if frame is None:
+                    camera = cv2.VideoCapture(Camera.video_source)
+                    time.sleep(2)
+                    continue
                 #logic
                 yield cv2.imencode('.jpg', frame)[1].tobytes()
             except:
